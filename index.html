@@ -34,7 +34,7 @@
               <p style="text-align:center">
                 <name>Yaoteng Tan</name>
               </p>
-              <p>I am a second-year PhD student at <a href="https://www.ece.ucr.edu/">the Department of Electrical and Computer Engineering at UC, Riverside</a>, where I work on computational imaging and adversarial machine learning. I am fortunate to be advised by Professor <a href="https://intra.ece.ucr.edu/~sasif/">M. Salman Asif</a>.
+              <p>I am a third-year PhD student at <a href="https://www.ece.ucr.edu/">the Department of Electrical and Computer Engineering at UC, Riverside</a>, where I work on trustworthy machine learning and inverse problem. I am fortunate to be advised by Professor <a href="https://intra.ece.ucr.edu/~sasif/">M. Salman Asif</a>.
               </p>
               <p>I received my Bachelor's degree from <a href="https://english.hust.edu.cn/">Huazhong University of Science and Technology</a> in 2022. 
               </p>
@@ -60,21 +60,17 @@
             <td style="padding:20px;width:100%;vertical-align:middle">
 
 		<heading>News</heading>
-    <!-- <p>2023: Our CVPR23 paper is now camera-ready and <a href="">open source</a>!.</p> -->
-		<p>2023: One paper accepted to the CVPR 2023, joint work with <a href="https://zikuicai.github.io/">Zikui Cai</a> and <a href="https://intra.ece.ucr.edu/~sasif/">M. Salman Asif</a>.</p>
+    <p>2024: I will present our recent work <a href="https://arxiv.org/abs/2407.11867">SLUG</a> at <a href="https://safegenaiworkshop.github.io/">NeurIPS24 SafeGenAi Workshop</a>.</p>
+		<!-- <p>2023: One paper accepted to the CVPR 2023, joint work with <a href="https://zikuicai.github.io/">Zikui Cai</a> and <a href="https://intra.ece.ucr.edu/~sasif/">M. Salman Asif</a>.</p> -->
 
     <heading>Publication</heading>
-<!--     <p>
-      I'm currently working on adversarial robustness problems. 
-    </p>
-  <br>
-   -->
-          </td>
-        </tr>
+
+      <!-- </td>
+      </tr> -->
       </tbody></table>
       <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
 
-    
+  
         <tr onmouseout="nerf_stop()" onmouseover="nerf_start()"  bgcolor="">
           <td style="padding:20px;width:25%;vertical-align:middle">
             <div class="one">
@@ -96,19 +92,19 @@
               <papertitle>Ensemble-based Blackbox Attacks on Dense Prediction</papertitle>
             </a>
             <br>
-
-            Zikui Cai*, <strong>Yaoteng Tan*</strong>, M. Salman Asif
-            (* Equal contribution)<br>
-<!--             <em>CVPR</em>, 2023 <font color="red"><strong>(New)</strong></font> -->
-	    <em>CVPR</em>, 2023
+              Zikui Cai*, <strong>Yaoteng Tan*</strong>, M. Salman Asif
+              (* Equal contribution)
             <br>
-            <a href="http://arxiv.org/abs/2303.14304">arXiv</a> / 
-	    <a href="https://openaccess.thecvf.com/content/CVPR2023/html/Cai_Ensemble-Based_Blackbox_Attacks_on_Dense_Prediction_CVPR_2023_paper.html">open access</a> /
-            <a href="https://github.com/CSIPlab/EBAD">code</a> /
-	    <a href="https://cvpr2023.thecvf.com/media/PosterPDFs/CVPR%202023/21780.png?t=1685590835.2844174">poster</a>
+            <!-- <em>CVPR</em>, 2023 <font color="red"><strong>(New)</strong></font> -->
+	          <em>CVPR</em>, 2023
+            <br>
+              <a href="http://arxiv.org/abs/2303.14304">arXiv</a> / 
+              <a href="https://openaccess.thecvf.com/content/CVPR2023/html/Cai_Ensemble-Based_Blackbox_Attacks_on_Dense_Prediction_CVPR_2023_paper.html">open access</a> /
+              <a href="https://github.com/CSIPlab/EBAD">code</a> /
+              <a href="https://cvpr2023.thecvf.com/media/PosterPDFs/CVPR%202023/21780.png?t=1685590835.2844174">poster</a>
             <p></p>
             <p>
-              We propose an approach for adversarial attacks on dense prediction models. Our proposed method can generate a single perturbation that can fool multiple blackbox detection and segmentation models simultaneously. 
+              We propose a query-efficient approach for adversarial attacks on dense prediction models. Our proposed method can generate a single perturbation that can fool multiple blackbox detection and segmentation models simultaneously, demonstrate generalizability across different tasks.
             </p>
           </td>
         </tr>
@@ -117,15 +113,110 @@
 
       <table width="100%" align="center" border="0" cellspacing="0" cellpadding="20"><tbody>
         <tr>
-          <td>
+      <td>
+
+    
+    
+    <heading>Preprint</heading>
+    </tbody></table>
+    <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+
+      <tr onmouseout="nerf_stop()" onmouseover="nerf_start()"  bgcolor="">
+        <td style="padding:20px;width:25%;vertical-align:middle">
+          <div class="one">
+            <img src='images/slug.png' width="160">
+          </div>
+          <script type="text/javascript">
+            function nerf_start() {
+              document.getElementById('nerf_image').style.opacity = "1";
+            }
+
+            function nerf_stop() {
+              document.getElementById('nerf_image').style.opacity = "0";
+            }
+            nerf_stop()
+          </script>
+        </td>
+        <td style="padding:20px;width:75%;vertical-align:middle">
+          <a href="https://arxiv.org/abs/2407.11867">
+            <papertitle>Targeted Unlearning with Single Layer Unlearning Gradient</papertitle>
+          </a>
+          <br>
+            Zikui Cai, <strong>Yaoteng Tan</strong>, M. Salman Asif
+          <br>
+          <em>Preprint</em>, 2024 <font color="red"><strong>(New)</strong></font>
+          <br>
+            <a href="https://arxiv.org/abs/2407.11867">arXiv</a> / 
+            <a href="https://github.com/CSIPlab/SLUG">code</a>
+          <p></p>
+          <p>
+            We propose a highly efficient machine unlearning method for fundation models (e.g., CLIP, Stable Diffusion, VLMs) that requires only one-time gradient calculation and one-step update on one model layer that are selected based on introduced metrics, layer importance and gradient alignment.
+          </p>
+        </td>
+      </tr>
+
+    </tbody></table>
+    <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+
+      <tr onmouseout="nerf_stop()" onmouseover="nerf_start()"  bgcolor="">
+        <td style="padding:20px;width:25%;vertical-align:middle">
+          <div class="one">
+            <img src='images/transform.png' width="160">
+          </div>
+          <script type="text/javascript">
+            function nerf_start() {
+              document.getElementById('nerf_image').style.opacity = "1";
+            }
+
+            function nerf_stop() {
+              document.getElementById('nerf_image').style.opacity = "0";
+            }
+            nerf_stop()
+          </script>
+        </td>
+        <td style="padding:20px;width:75%;vertical-align:middle">
+          <a href="https://arxiv.org/abs/2406.08443">
+            <papertitle>Transform-Dependent Adversarial Attacks</papertitle>
+          </a>
+          <br>
+            <strong>Yaoteng Tan</strong>, Zikui Cai, M. Salman Asif
+          <br>
+          <em>Preprint</em>, 2024 <font color="red"><strong>(New)</strong></font>
+          <br>
+            <a href="https://arxiv.org/abs/2406.08443">arXiv</a>
+          <p></p>
+          <p>
+            Many properties of adversarial attacks are well-studied today (e.g., optimization, transferability, physical implementa-
+            tion, etc.). In this work, we explore an under-researched transform-dependent property of adversarial attacks, which
+            the optimization process of additive adversarial perturbations can be combined with various image transformations to
+            produce versatile, transform-dependent attack effects.           
+          </p>
+        </td>
+      </tr>
+
+    </tbody></table>
+    <table width="100%" align="center" border="0" cellspacing="0" cellpadding="20"><tbody>
+      <tr>
+    <td>
 
     <heading>Service</heading>
-		<p>Conference review: WACV 2024</p>
-		<p>Teaching Assistant: EE240 Pattern Recognition, 2023 Spring</p>
+		<p>Conference review:</p>
+    <ul>
+      <li>
+        WACV 2024
+      </li>
+    </ul>
+    
+    <p>Teaching Assistant:</p>
+    <ul>
+      <li>UCR EE240 Pattern Recognition, 2023, 2024 Spring</li>
+      <li>UCR CS171/EE142 Intro. to Machine Learning, 2023 Fall</li>
+    </ul>
+    
 
 
 <br>
-<p>I thank the template from <a href="https://jonbarron.info/">Jon Barron</a></p> 
+<p>Acknowledgement: template from <a href="https://jonbarron.info/">Jon Barron</a></p> 
             </td>
           </tr>
         
