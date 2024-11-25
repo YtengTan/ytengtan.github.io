@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="One-dimensional Adapter to Rule Them All: Concepts, Diffusion Models and Erasing Applications">
+  <meta name="keywords" content="Active Learning, Object Detection">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>One-dimensional Adapter to Rule Them All: Concepts, Diffusion Models and Erasing Applications</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script> -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="../assets/css/bulma.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="../assets/css/index.css">
+  <!-- <link rel="icon" href="../assets/project/spm/spm-favicon.svg"> -->
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="../assets/js/fontawesome.all.min.js"></script>
+  <script src="../assets/js/bulma-carousel.min.js"></script>
+  <script src="../assets/js/bulma-slider.min.js"></script>
+
+  <!-- borrowed from https://imagic-editing.github.io -->
+  <style type="text/css">
+    .btn {
+        color:black;
+        text-decoration:none;
+    }
+    .btn:hover {
+        color:gray;
+        text-decoration:none;
+    }
+    table.demo1 {
+        width:100%;
+        text-align:center;
+    }
+    .demo1 img {
+        width:300px;
+    }
+    td.prompt {
+        width:100%;
+        text-align:center;
+        font-family: monospace;
+        font-size:1rem;
+        line-height: normal !important;
+    }
+    td.prompt a {
+        color:#ddd;
+        text-decoration:none;
+    }
+    td.prompt a:hover, td.prompt a.active {
+        color:black;
+        text-decoration:line-through;
+    }
+    .img-stack {
+        position:relative;
+        display: block;
+        width:300px;
+        height: 450px;
+    }
+    .img-stack img {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        z-index: 0;
+    }
+    .img-stack img.active {
+        z-index: 1;
+    }
+    .img-stack .overlay {
+        width: 300px;
+        height: 300px;
+        opacity: 0;
+        transition: opacity .2s;
+        z-index: 2;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        background: white;
+    }
+    .carousel {
+        position:relative;
+        width:700px;
+        height:550px;
+        overflow:hidden;
+    }
+    .carousel > table {
+        position:absolute;
+        top: 0px;
+        transition: left 1s;
+        width:700px;
+    }
+    .carousel_table td {
+        text-align:center;
+    }
+    .carousel_table td:nth-child(2) {
+        font-size:150%;
+        padding: .5em;
+    }
+    pre {
+        background-color:#eee;
+        border: 1px solid #999;
+        border-radius: 5px;
+        padding: 10px;
+    white-space: break-spaces;
+    width:80%;
+    text-align:left;
+    }
+    td.gif {
+        width: 33%;
+        font-family: monospace;
+        font-size: 120%;
+    }
+    .dl_link {
+        display: inline-block;
+        padding-right: 6px;
+        padding-left: 6px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+    }
+    .dl_link, .dl_link td {
+        color: black;
+        text-decoration: none;
+        font-size: 120%;
+    }
+    .dl_link, .dl_link table {
+        border-radius: 5px;
+        background-color: none;
+    }
+    .dl_link:hover, .dl_link:hover * {
+        color: #404040 !important;
+        background-color: #d9d9d9 !important;
+    }
+    @media only screen and (max-width: 930px) {
+        .content { width:100% !important; }
+    }
+    </style>
+    <script type="text/javascript">
+      var curr_idx = 0;
+      var num_tables = 6;
+      function move(direction) {
+          if (curr_idx == 0 && direction < 0) {
+        move(num_tables - 1);
+        return;
+          }
+          if (curr_idx == num_tables - 1 && direction > 0) {
+        move(-1 * (num_tables - 1));
+        return;
+          }
+          tables = document.getElementsByClassName("carousel_table");
+          for(var i = 0; i < tables.length; i++) {
+        tables[i].style.left = (parseInt(tables[i].style.left.substring(0, tables[i].style.left.length - 2)) - direction * 700).toString() + "px";
+          }
+          curr_idx += direction;
+      }
+      function hideOverlay(classname) {
+          document.getElementById(classname + "_overlay").style.opacity = "0";
+      }
+      function activate(classname, idx, max) {
+          document.getElementById(classname + "_overlay").style.opacity = "1";
+          setTimeout(function() {
+        for(var i = 1; i <= max; i++) {
+            document.getElementById(classname + "_" + i.toString()).className = "";
+            document.getElementById(classname + "_text_" + i.toString()).className = "";
+        }
+        document.getElementById(classname + "_" + idx.toString()).className = "active";
+        document.getElementById(classname + "_text_" + idx.toString()).className = "active";
+        setTimeout(hideOverlay, 200, classname);
+          }, 200);
+      }
+      var moving = true;
+      var stopCounter = 0;
+      function autoMove(currCounter) {
+          if(moving && currCounter >= stopCounter) {
+        move(1);
+              setTimeout(autoMove, 5000, stopCounter);
+          }
+      }
+      function beginMoving() {
+          moving = true;
+          setTimeout(autoMove, 5000, stopCounter);
+      }
+      function stopMoving() {
+          moving = false;
+          stopCounter++;
+      }
+    </script>
+</head>
+
+
+<body dir="ltr" onload="beginMoving();">
+<div class="content" style="text-align:center;vertical-align:middle;">
+
+<section class="hero">
+  <div class="hero-body" style="padding-bottom: 0;">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-2 publication-title">Targeted Unlearning with Single Layer Unlearning Gradient</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><a href="https://zikuicai.github.io/">Zikui Cai</a><sup>1,2</sup>,</span>
+            <span class="author-block"><a href="https://ytengtan.github.io/">Yaoteng Tan</a><sup>1</sup>,</span>
+            <span class="author-block"><a href="https://intra.ece.ucr.edu/~sasif/">M. Salman Asif</a><sup>1</sup></span>
+          </div>
+
+          <div class="is-size-5 publication-authors" style="padding-bottom: 0px;">
+            <span class="author-block"><sup>1</sup>University of California, Riverside</span> <br>
+            <span class="author-block"><sup>2</sup>University of Maryland, College Park</span>
+          </div>
+          
+          <!-- <div class="is-size-6 publication-authors">
+            <span class="author-block">
+              <sup>*</sup>Equal contribution; 
+              <sup>⚑</sup>Project lead; 
+              <sup>†</sup>Corresponding authors.
+            </span>
+          </div> -->
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <table class="demo1" onmouseenter="stopMoving();" onmouseleave="beginMoving();" style="margin-bottom: -10px;">
+        <tr>
+          <td style="width:5%;font-size:150%;" valign="top">
+            <div style="height:300px;position:relative;text-align:center;vertical-align:middle;"><a href="#" onclick="move(-1);" class="btn" style="position:absolute;top:240px;">&#9664;</a></div>
+          </td>
+          <td style="width:90%">
+            <div class="carousel">
+              <table id="cat_table" class="carousel_table" style="left:0px;text-align:center;vertical-align:middle;">
+                <td><b>Input Image</b></td><td></td><td><b>Erased Image</b></td>
+                <tr>
+                  <td><div style="height: 450px; vertical-align: middle; display: table-cell;">
+                    <img src="../assets/project/spm/obj_breadcat.png" /></div></td>
+                  <td style="text-align:center;vertical-align:middle;">&rightarrow;</td>
+                  <td><div style="height: 450px; vertical-align: middle; display: table-cell;">
+                    <div class="img-stack" style="height: 300px;">
+                    <img src="../assets/project/spm/obj_breadcat_bread.png" id="cat_1" class="active" />
+                    <div class="overlay" id="breadcat_overlay"></div>
+                    </div>
+                  </div></td>
+                </tr>
+                <tr>
+                  <td colspan="3" class="prompt" style="position: relative; top: -55px;">"bread <a href="#" id="cat_text_1" onclick="activate('cat', 1, 1);" class="active">cat</a>." </td>
+                </tr>
+              </table>
+              <table id="jedicat_table" class="carousel_table" style="left:700px;text-align:center;vertical-align:middle;">
+                <td><b>Input Image</b></td><td></td><td><b>Erased Image</b></td>
+                <tr>
+                  <td><img src="../assets/project/spm/obj_catlightsaber.png" /></td>
+                  <td style="text-align:center;vertical-align:middle;">&rightarrow;</td>
+                  <td><div class="img-stack">
+                    <img src="../assets/project/spm/obj_catlightsaber_lightsaber.png" id="jedicat_1" class="active" />
+                  <div class="overlay" id="jedicat_overlay"></div>
+                  </div></td>
+                </tr>
+                <tr>
+                  <td colspan="3" class="prompt" style="position: relative; top: -16px;">"a master jedi 
+                    <a href="#" id="jedicat_text_1" onclick="activate('jedicat', 1, 1);" class="active">cat</a> in star wars holding a blue lightsaber, wearing a white jedi cloak hood ((
+                    <a href="#" id="jedicat_text_1" onclick="activate('jedicat', 1, 1);" class="active">cat</a>:1.3)), in spaceship, stars in frame"
+                  </td>
+                </tr>
+              </table>
+              <table id="snoopycomic_table" class="carousel_table" style="left:1400px;text-align:center;vertical-align:middle;">
+                <td><b>Input Image</b></td><td></td><td><b>Erased Image</b></td>
+                <tr>
+                  <td><div style="height: 450px; vertical-align: middle; display: table-cell;">
+                    <img src="../assets/project/spm/objsty_snoopycomic.jpg" /></div></td>
+                  <td style="text-align:center;vertical-align:middle;">&rightarrow;</td>
+                  <td><div style="height: 450px; vertical-align: middle; display: table-cell;">
+                    <div class="img-stack" style="height: 300px;">
+                    <img src="../assets/project/spm/objsty_snoopycomic_snoopy.jpg" id="snoopycomic_1"  class="active" />
+                    <img src="../assets/project/spm/objsty_snoopycomic_comic.jpg" id="snoopycomic_2" />
+                    <!-- <img src="../assets/project/spm/objsty_snoopycomic_none.jpg" id="snoopycomic_3"/> -->
+                    <div class="overlay" id="snoopycomic_overlay"></div>
+                    </div>
+                  </div></td>
+                </tr>
+                <tr>
+                  <td colspan="3" class="prompt" style="position: relative; top: -55px;">"A 
+                    <a href="#" id="snoopycomic_text_1" onclick="activate('snoopycomic', 1, 2);" class="active">comic</a> of 
+                    <a href="#" id="snoopycomic_text_2" onclick="activate('snoopycomic', 2, 2);">Snoopy</a>
+                    <!-- <a href="#" id="snoopycomic_text_3" onclick="activate('snoopycomic', 3, 3);">Snoopy Comic</a> -->
+                    : ‘Sailing out of the sea’"
+                  </td>
+                </tr>
+              </table>
+              <table id="vangoghcat_table" class="carousel_table" style="left:2100px;text-align:center;vertical-align:middle;">
+                <td><b>Input Image</b></td><td></td><td><b>Erased Image</b></td>
+                <tr>
+                  <td><div style="height: 450px; vertical-align: middle; display: table-cell;">
+                    <img src="../assets/project/spm/objsty_vangoghcat.png" /></div></td>
+                  <td style="text-align:center;vertical-align:middle;">&rightarrow;</td>
+                  <td><div style="height: 450px; vertical-align: middle; display: table-cell;">
+                    <div class="img-stack" style="height: 300px;">
+                    <img src="../assets/project/spm/objsty_vangoghcat_cat.png" id="vangoghcat_1"  class="active" />
+                    <img src="../assets/project/spm/objsty_vangoghcat_vangogh.png" id="vangoghcat_2" />
+                    <div class="overlay" id="vangoghcat_overlay"></div>
+                    </div>
+                  </div></td>
+                </tr>
+                <tr>
+                  <td colspan="3" class="prompt" style="position: relative; top: -50px;">"
+                    <a href="#" id="vangoghcat_text_1" onclick="activate('vangoghcat', 1, 2);" class="active">Van Gogh</a>  portrait of anthropomorphic 
+                    <a href="#" id="vangoghcat_text_2" onclick="activate('vangoghcat', 2, 2);">cat</a>
+                    <!-- <a href="#" id="vangoghcat_text_3" onclick="activate('vangoghcat', 3, 3);">Snoopy Comic</a> -->
+                    holding a basket of fruit painting, yellow ocher, Prussian blue, ultramarine"
+                  </td>
+                </tr>
+              </table>
+              <table id="nudity_table" class="carousel_table" style="left:2800px;text-align:center;vertical-align:middle;">
+                <td><b>Input Image</b></td><td></td><td><b>Erased Image</b></td>
+                <tr>
+                  <td><div style="height: 450px; vertical-align: middle; display: table-cell;">
+                    <img src="../assets/project/spm/nudity_male.png" /></div></td>
+                  <td style="text-align:center;vertical-align:middle;">&rightarrow;</td>
+                  <td><div style="height: 450px; vertical-align: middle; display: table-cell;">
+                    <div class="img-stack" style="height: 300px;">
+                    <img src="../assets/project/spm/nudity_male_erased.png" id="nudity_1" class="active" />
+                    <div class="overlay" id="nudity_overlay"></div>
+                    </div>
+                  </div></td>
+                </tr>
+                <tr>
+                  <td colspan="3" class="prompt" style="position: relative; top: -60px;">(<a href="#" id="nudity_text_1" onclick="activate('nudity', 1, 1);" class="active">nudity</a>) 
+                    hygge bedroom, rgb, thin, model, short 
+                    black curly hair, round face, laced lingerie, 
+                    amazing composition & dynamic posing, 
+                    by franz xavier leyendecker, wlop! muted 
+                    colors, highly detailed, fantasy art by craig 
+                    mullins, thomas kinkade cfg _ scale 9"</td>
+                </tr>
+              </table>
+              <table id="luke2vader_table" class="carousel_table" style="left:3500px;text-align:center;vertical-align:middle;">
+                <td><b>Input Image</b></td><td></td><td><b>Erased Image</b></td>
+                <tr>
+                  <td><img src="../assets/project/spm/surrogate_luke.png" /></td>
+                  <td style="text-align:center;vertical-align:middle;">&rightarrow;</td>
+                  <td><div class="img-stack">
+                    <img src="../assets/project/spm/surrogate_luke2vader.png" id="luke2vader_1" class="active" />
+                  <div class="overlay" id="luke2vader_overlay"></div>
+                  </div></td>
+                </tr>
+                <tr>
+                  <td colspan="3" class="prompt" style="position: relative; top: -16px;">"
+                    <a href="#" id="luke2vader_text_1" onclick="activate('luke2vader', 1, 1);" class="active">Luke Skywalker</a>
+                    (→Darth Vader) the dark lord of the sith, chibi style, riding a large Motocycle."</td>
+                </tr>
+              </table>
+            </div>
+          </td>
+          <td style="width:5%;font-size:150%;" valign="top">
+            <div style="height:300px;left:-22px;position:relative;text-align:center;vertical-align:middle;"><a href="#" onclick="move(1);" class="btn" style="position:absolute;top:245px;">&#9658;</a></div>
+          </td>
+        </tr>
+      </table>
+        
+      <!-- <span style="font-size:110%;">SPM achieves concept elimination in a non-invasive, precise, customizable, and transferable manner.</span><br /><br /> -->
+    
+      <div class="column has-text-centered">
+        <div class="publication-links">
+          <!-- arXiv Link. -->
+          <span class="link-block">
+            <a href="https://arxiv.org/abs/2407.11867"
+                class="external-link button is-normal is-rounded is-dark">
+              <span class="icon">
+                  <i class="ai ai-arxiv"></i>
+              </span>
+              <span>arXiv</span>
+            </a>
+          </span>
+          <!-- Code Link. -->
+          <span class="link-block">
+            <a href="https://github.com/CSIPlab/SLUG"
+                class="external-link button is-normal is-rounded is-dark">
+              <span class="icon">
+                  <i class="fab fa-github"></i>
+              </span>
+              <span>Code</span>
+            </a>
+          </span>
+          <!-- Demo Link. (TBD) -->
+          <!-- <span class="link-block">
+            <a href="https://github.com/???"
+                class="external-link button is-normal is-rounded is-dark">
+              <span class="icon">
+                <i class="fas fa-stream"></i>
+              </span>
+              <span>Demo</span>
+            </a>
+          </span> -->
+        </div>
+      </div>
+    
+    </div>
+  </div>
+</section>
+
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            The unauthorized generation of privacy-related and copyright-infringing content using generative-AI 
+            is becoming a significant concern for society, raising ethical, legal, and privacy issues that demand urgent attention. 
+            Recently, machine unlearning techniques have arisen that attempt to eliminate the influence of sensitive content used during model training, 
+            but they often require extensive updates in the model, reduce the utility of the models for unrelated content, 
+            and/or incur substantial computational costs. In this work, we propose a novel and efficient method called Single Layer Unlearning Gradient (SLUG), 
+            that can unlearn targeted information by updating a single targeted layer of a model using a one-time gradient computation. 
+            We introduce two metrics: layer importance and gradient alignment, to identify the appropriate layers for unlearning targeted information. 
+            Our method is highly modular and enables selective removal of multiple concepts from the generated outputs of widely used foundation models 
+            (e.g., CLIP), generative models (e.g., Stable Diffusion) and Vision-Language models. 
+            Our method shows effectiveness on a broad spectrum of concepts ranging from concrete (e.g., celebrity name, intellectual property figure, and object) 
+            to abstract (e.g., novel concept and artistic style).
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+</section>
+
+<section class="section hero">
+  <div class="container is-max-desktop">
+    <!-- Limitations. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Limitations of Previous Methods</h2>
+          <div class="content has-text-justified">
+            <img src="../assets/project/spm/spm-teaser.jpg"
+                 class="interpolation-image"
+                 alt="Teaser image."/>
+            <br><br>
+            <p>
+              <b>Generation alternation</b> is one of the issues that previous concept erasing methods are now facing. 
+              The generations of non-erasing-target concepts could differ from the original model, and this may even escalate into <b>concept erosion</b> when more and more concepts are editted from the model. 
+            </p>
+            <p>
+              <b>Inefficiency</b>, on the other side, also limits the usage of previous erasing methods in industry and communities.
+              Their full-finetuning or specification-based erasing strategies are non-transferable across models, and non-customizable for complex and evolving application scenarios.
+            </p>
+            <p>
+              In contrast, our SPM can precisely erase targeted concept from DMs while preserving non-targets, as a one-size-fits-all lightweight, customizable, and model-transferable solution.
+            </p>
+          </div>
+      </div>
+    </div>
+    <!--/ Limitations. -->
+</section>
+
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <!-- Method. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Our Method</h2>
+          <div class="content has-text-justified">
+            <img src="../assets/project/slug/slug-framework.png"
+                 class="interpolation-image"
+                 alt="Framework image."/>
+            <br><br>
+            <p>
+              A one-dimentional adapter which we call <b>S</b>emi-<b>P</b>ermeable <b>M</b>embrane (SPM) is employed in a general diffusion model.  
+              We design the <b>Latent Anchoring</b> during the finetuning process to efficiently alleviate the alternation and erosion phenomenon in a self-supervised manner.
+              During the generation phase, we introduce <b>Facilitated Transport</b> mechanism to ensure that only threatening prompts amplify the permeability rate of corresponding SPMs, 
+              while the generation of safe prompts (e.g., Picasso style) remain unharmed.
+            </p>
+          </div>
+      </div>
+    </div>
+    <!--/ Method. -->
+</section>
+
+<section class="section hero">
+  <div class="container is-max-desktop">
+    <!-- Results. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Results</h2>
+          <h3 class="title is-4">General Concept Removal</h3>
+          <div class="columns is-centered">
+            <div class="column">
+              <div class="content has-text-justified">
+                <img src="../assets/project/spm/spm-case_single.png"
+                    class="interpolation-image"
+                    alt="Single concept removal image."/>
+                <br><br>
+                <p>
+                  Samples of "graffiti of the <i>{concept}</i>" after erasing <i>Snoopy</i>. 
+                  Our SPM exhibits sufficient elimination on the targeted concept <i>Snoopy</i>, while the impact on non-targets is negligible.
+                </p>
+              </div>
+            </div>
+
+            <div class="column">
+              <div class="content has-text-justified" style="padding-top: 9px;">
+                <img src="../assets/project/spm/spm-case_transfer.png"
+                    class="interpolation-image"
+                    alt="Single concept removal (transfer) image."/>
+                <br><br>
+                <p>
+                  Training-free transfer results. 
+                  Once obtained (e.g. from SD v1.4 in this case), SPMs can transfer to other specialized models without re-tuning,
+                  and express both its target concept erasing and non-target preservation capabilities well.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="title is-4">Artistic Style Removal</h3>
+          <div class="content has-text-justified">
+            <img src="../assets/project/spm/spm-case_art.png"
+                class="interpolation-image"
+                alt="Artistic style removal image."/>
+            <br><br>
+            <p>
+              Samples from DMs with artistic styles removed. 
+              SPMs can erase targeted styles (upper <i>Van Gogh</i> and lower <i>Picasso</i>) while preserving others, unlike prior works that show an evident trade-off between erasing and preservation.
+            </p>
+          </div>
+
+          <h3 class="title is-4">Explicit Content Removal</h3>
+          <div class="content has-text-justified">
+            <img src="../assets/project/spm/spm-nudity.png"
+                class="interpolation-image"
+                alt="Explicit content removal image."/>
+            <br><br>
+            <p>
+              <a href="https://github.com/notAI-tech/NudeNet">NudeNet</a> evaluation results on the I2P benchmark. 
+              The numbers on the left count the exposed body parts generated by the original SD v1.4. 
+              The binplots show the decrement with different methods applied for nudity mitigation, 
+              encompassing data-filtering (SD v2.0) and different erasing strategies. 
+              Compared to the prior works, SPM effectively eliminates explicit contents across different nude categories.
+            </p>
+            <img src="../assets/project/spm/spm-nudity-cases.jpeg"
+                class="interpolation-image"
+                alt="Explicit content removal cases."/>
+            <br><br>
+            <p>
+              Samples conditioned on the I2P prompts with the concept <i>nudity</i> erased. 
+              In each row, from left to right, we present the prompt from the I2P dataset, 
+              the generation outputs of SD v1.4, SD v1.4 + SPM, ChillOutMix, and ChillOutMix + SPM.
+            </p>
+          </div>
+
+          <h3 class="title is-4">More Results</h3>
+          <div class="content has-text-justified">
+            <p>
+              Further results, such as <b>numerical comparison</b>, <b>multi-concept erasure</b>, <b>memorized image erasure</b>, <b>applications on other DMs (e.g. SD v2.x, SDXL)</b> as well as 
+              <b>more qualitative samples</b>, can be found in the main text and the supplementary material of 
+              <a href="https://arxiv.org/abs/2312.16145">our paper</a>.
+            </p>
+          </div>
+
+      </div>
+    </div>
+    <!--/ Method. -->
+</section>
+
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre style="display: inline-block;"><code>
+      @article{cai2024unlearning,
+        title={Unlearning Targeted Information via Single Layer Unlearning Gradient},
+        author={Cai, Zikui and Tan, Yaoteng and Asif, M Salman},
+        journal={arXiv preprint arXiv:2407.11867},
+        year={2024}
+      }
+    </code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <!-- <div class="content has-text-centered">
+      <a class="icon-link"
+         href="../assets/videos/nerfies_paper.pdf">
+        <i class="fas fa-file-pdf"></i>
+      </a>
+      <a class="icon-link" href="https://github.com/keunhong" class="external-link" disabled>
+        <i class="fab fa-github"></i>
+      </a>
+    </div> -->
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <!-- <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p> -->
+          <p>
+            This page is modified based on <a
+            href="https://github.com/nerfies/nerfies.github.io">nerfies project page</a>.
+            <!-- This means you are free to borrow the <a
+              href="https://github.com/nerfies/nerfies.github.io">source code</a> of this website,
+            we just ask that you link back to this page in the footer.
+            Please remember to remove the analytics code included in the header of the website which
+            you do not want on your website. -->
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+</div>
+</body>
+</html>
