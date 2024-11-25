@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="description"
-        content="One-dimensional Adapter to Rule Them All: Concepts, Diffusion Models and Erasing Applications">
-  <meta name="keywords" content="Active Learning, Object Detection">
+        content="Targeted Unlearning with Layer Unlearning Gradient">
+  <meta name="keywords" content="Machine Unlearning, Foundation Model, Single Layer, Single step">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>One-dimensional Adapter to Rule Them All: Concepts, Diffusion Models and Erasing Applications</title>
+  <title>Targeted Unlearning with Single Layer Unlearning Gradient</title>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script> -->
@@ -22,21 +22,18 @@
     gtag('config', 'G-PYVRSFMDRL');
   </script>
 
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
-        rel="stylesheet">
-
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" >
   <link rel="stylesheet" href="../assets/css/bulma.min.css">
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="../assets/css/index.css">
-  <!-- <link rel="icon" href="../assets/project/spm/spm-favicon.svg"> -->
 
+  
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script defer src="../assets/js/fontawesome.all.min.js"></script>
   <script src="../assets/js/bulma-carousel.min.js"></script>
   <script src="../assets/js/bulma-slider.min.js"></script>
 
-  <!-- borrowed from https://imagic-editing.github.io -->
   <style type="text/css">
     .btn {
         color:black;
@@ -243,143 +240,8 @@
 <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
-      <table class="demo1" onmouseenter="stopMoving();" onmouseleave="beginMoving();" style="margin-bottom: -10px;">
-        <tr>
-          <td style="width:5%;font-size:150%;" valign="top">
-            <div style="height:300px;position:relative;text-align:center;vertical-align:middle;"><a href="#" onclick="move(-1);" class="btn" style="position:absolute;top:240px;">&#9664;</a></div>
-          </td>
-          <td style="width:90%">
-            <div class="carousel">
-              <table id="cat_table" class="carousel_table" style="left:0px;text-align:center;vertical-align:middle;">
-                <td><b>Input Image</b></td><td></td><td><b>Erased Image</b></td>
-                <tr>
-                  <td><div style="height: 450px; vertical-align: middle; display: table-cell;">
-                    <img src="../assets/project/spm/obj_breadcat.png" /></div></td>
-                  <td style="text-align:center;vertical-align:middle;">&rightarrow;</td>
-                  <td><div style="height: 450px; vertical-align: middle; display: table-cell;">
-                    <div class="img-stack" style="height: 300px;">
-                    <img src="../assets/project/spm/obj_breadcat_bread.png" id="cat_1" class="active" />
-                    <div class="overlay" id="breadcat_overlay"></div>
-                    </div>
-                  </div></td>
-                </tr>
-                <tr>
-                  <td colspan="3" class="prompt" style="position: relative; top: -55px;">"bread <a href="#" id="cat_text_1" onclick="activate('cat', 1, 1);" class="active">cat</a>." </td>
-                </tr>
-              </table>
-              <table id="jedicat_table" class="carousel_table" style="left:700px;text-align:center;vertical-align:middle;">
-                <td><b>Input Image</b></td><td></td><td><b>Erased Image</b></td>
-                <tr>
-                  <td><img src="../assets/project/spm/obj_catlightsaber.png" /></td>
-                  <td style="text-align:center;vertical-align:middle;">&rightarrow;</td>
-                  <td><div class="img-stack">
-                    <img src="../assets/project/spm/obj_catlightsaber_lightsaber.png" id="jedicat_1" class="active" />
-                  <div class="overlay" id="jedicat_overlay"></div>
-                  </div></td>
-                </tr>
-                <tr>
-                  <td colspan="3" class="prompt" style="position: relative; top: -16px;">"a master jedi 
-                    <a href="#" id="jedicat_text_1" onclick="activate('jedicat', 1, 1);" class="active">cat</a> in star wars holding a blue lightsaber, wearing a white jedi cloak hood ((
-                    <a href="#" id="jedicat_text_1" onclick="activate('jedicat', 1, 1);" class="active">cat</a>:1.3)), in spaceship, stars in frame"
-                  </td>
-                </tr>
-              </table>
-              <table id="snoopycomic_table" class="carousel_table" style="left:1400px;text-align:center;vertical-align:middle;">
-                <td><b>Input Image</b></td><td></td><td><b>Erased Image</b></td>
-                <tr>
-                  <td><div style="height: 450px; vertical-align: middle; display: table-cell;">
-                    <img src="../assets/project/spm/objsty_snoopycomic.jpg" /></div></td>
-                  <td style="text-align:center;vertical-align:middle;">&rightarrow;</td>
-                  <td><div style="height: 450px; vertical-align: middle; display: table-cell;">
-                    <div class="img-stack" style="height: 300px;">
-                    <img src="../assets/project/spm/objsty_snoopycomic_snoopy.jpg" id="snoopycomic_1"  class="active" />
-                    <img src="../assets/project/spm/objsty_snoopycomic_comic.jpg" id="snoopycomic_2" />
-                    <!-- <img src="../assets/project/spm/objsty_snoopycomic_none.jpg" id="snoopycomic_3"/> -->
-                    <div class="overlay" id="snoopycomic_overlay"></div>
-                    </div>
-                  </div></td>
-                </tr>
-                <tr>
-                  <td colspan="3" class="prompt" style="position: relative; top: -55px;">"A 
-                    <a href="#" id="snoopycomic_text_1" onclick="activate('snoopycomic', 1, 2);" class="active">comic</a> of 
-                    <a href="#" id="snoopycomic_text_2" onclick="activate('snoopycomic', 2, 2);">Snoopy</a>
-                    <!-- <a href="#" id="snoopycomic_text_3" onclick="activate('snoopycomic', 3, 3);">Snoopy Comic</a> -->
-                    : ‘Sailing out of the sea’"
-                  </td>
-                </tr>
-              </table>
-              <table id="vangoghcat_table" class="carousel_table" style="left:2100px;text-align:center;vertical-align:middle;">
-                <td><b>Input Image</b></td><td></td><td><b>Erased Image</b></td>
-                <tr>
-                  <td><div style="height: 450px; vertical-align: middle; display: table-cell;">
-                    <img src="../assets/project/spm/objsty_vangoghcat.png" /></div></td>
-                  <td style="text-align:center;vertical-align:middle;">&rightarrow;</td>
-                  <td><div style="height: 450px; vertical-align: middle; display: table-cell;">
-                    <div class="img-stack" style="height: 300px;">
-                    <img src="../assets/project/spm/objsty_vangoghcat_cat.png" id="vangoghcat_1"  class="active" />
-                    <img src="../assets/project/spm/objsty_vangoghcat_vangogh.png" id="vangoghcat_2" />
-                    <div class="overlay" id="vangoghcat_overlay"></div>
-                    </div>
-                  </div></td>
-                </tr>
-                <tr>
-                  <td colspan="3" class="prompt" style="position: relative; top: -50px;">"
-                    <a href="#" id="vangoghcat_text_1" onclick="activate('vangoghcat', 1, 2);" class="active">Van Gogh</a>  portrait of anthropomorphic 
-                    <a href="#" id="vangoghcat_text_2" onclick="activate('vangoghcat', 2, 2);">cat</a>
-                    <!-- <a href="#" id="vangoghcat_text_3" onclick="activate('vangoghcat', 3, 3);">Snoopy Comic</a> -->
-                    holding a basket of fruit painting, yellow ocher, Prussian blue, ultramarine"
-                  </td>
-                </tr>
-              </table>
-              <table id="nudity_table" class="carousel_table" style="left:2800px;text-align:center;vertical-align:middle;">
-                <td><b>Input Image</b></td><td></td><td><b>Erased Image</b></td>
-                <tr>
-                  <td><div style="height: 450px; vertical-align: middle; display: table-cell;">
-                    <img src="../assets/project/spm/nudity_male.png" /></div></td>
-                  <td style="text-align:center;vertical-align:middle;">&rightarrow;</td>
-                  <td><div style="height: 450px; vertical-align: middle; display: table-cell;">
-                    <div class="img-stack" style="height: 300px;">
-                    <img src="../assets/project/spm/nudity_male_erased.png" id="nudity_1" class="active" />
-                    <div class="overlay" id="nudity_overlay"></div>
-                    </div>
-                  </div></td>
-                </tr>
-                <tr>
-                  <td colspan="3" class="prompt" style="position: relative; top: -60px;">(<a href="#" id="nudity_text_1" onclick="activate('nudity', 1, 1);" class="active">nudity</a>) 
-                    hygge bedroom, rgb, thin, model, short 
-                    black curly hair, round face, laced lingerie, 
-                    amazing composition & dynamic posing, 
-                    by franz xavier leyendecker, wlop! muted 
-                    colors, highly detailed, fantasy art by craig 
-                    mullins, thomas kinkade cfg _ scale 9"</td>
-                </tr>
-              </table>
-              <table id="luke2vader_table" class="carousel_table" style="left:3500px;text-align:center;vertical-align:middle;">
-                <td><b>Input Image</b></td><td></td><td><b>Erased Image</b></td>
-                <tr>
-                  <td><img src="../assets/project/spm/surrogate_luke.png" /></td>
-                  <td style="text-align:center;vertical-align:middle;">&rightarrow;</td>
-                  <td><div class="img-stack">
-                    <img src="../assets/project/spm/surrogate_luke2vader.png" id="luke2vader_1" class="active" />
-                  <div class="overlay" id="luke2vader_overlay"></div>
-                  </div></td>
-                </tr>
-                <tr>
-                  <td colspan="3" class="prompt" style="position: relative; top: -16px;">"
-                    <a href="#" id="luke2vader_text_1" onclick="activate('luke2vader', 1, 1);" class="active">Luke Skywalker</a>
-                    (→Darth Vader) the dark lord of the sith, chibi style, riding a large Motocycle."</td>
-                </tr>
-              </table>
-            </div>
-          </td>
-          <td style="width:5%;font-size:150%;" valign="top">
-            <div style="height:300px;left:-22px;position:relative;text-align:center;vertical-align:middle;"><a href="#" onclick="move(1);" class="btn" style="position:absolute;top:245px;">&#9658;</a></div>
-          </td>
-        </tr>
-      </table>
-        
-      <!-- <span style="font-size:110%;">SPM achieves concept elimination in a non-invasive, precise, customizable, and transferable manner.</span><br /><br /> -->
-    
+
+
       <div class="column has-text-centered">
         <div class="publication-links">
           <!-- arXiv Link. -->
@@ -397,21 +259,23 @@
             <a href="https://github.com/CSIPlab/SLUG"
                 class="external-link button is-normal is-rounded is-dark">
               <span class="icon">
-                  <i class="fab fa-github"></i>
+                  <i class="fa fa-github"></i>
               </span>
               <span>Code</span>
             </a>
           </span>
+          
           <!-- Demo Link. (TBD) -->
           <!-- <span class="link-block">
-            <a href="https://github.com/???"
+            <a href="https://huggingface.com/???"
                 class="external-link button is-normal is-rounded is-dark">
               <span class="icon">
-                <i class="fas fa-stream"></i>
+                <i class="ai ai-dataverse"></i>
               </span>
               <span>Demo</span>
             </a>
           </span> -->
+
         </div>
       </div>
     
@@ -419,9 +283,10 @@
   </div>
 </section>
 
-<section class="section hero is-light">
+
+
+<section class="section hero">
   <div class="container is-max-desktop">
-    <!-- Abstract. -->
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3">Abstract</h2>
@@ -442,151 +307,203 @@
         </div>
       </div>
     </div>
-    <!--/ Abstract. -->
 </section>
+
 
 <section class="section hero">
   <div class="container is-max-desktop">
-    <!-- Limitations. -->
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
-        <h2 class="title is-3">Limitations of Previous Methods</h2>
+        <h2 class="title is-3">Background</h2>
           <div class="content has-text-justified">
-            <img src="../assets/project/spm/spm-teaser.jpg"
+            <!-- <img src="../assets/project/slug/background.png"
                  class="interpolation-image"
-                 alt="Teaser image."/>
-            <br><br>
-            <p>
-              <b>Generation alternation</b> is one of the issues that previous concept erasing methods are now facing. 
-              The generations of non-erasing-target concepts could differ from the original model, and this may even escalate into <b>concept erosion</b> when more and more concepts are editted from the model. 
-            </p>
-            <p>
-              <b>Inefficiency</b>, on the other side, also limits the usage of previous erasing methods in industry and communities.
-              Their full-finetuning or specification-based erasing strategies are non-transferable across models, and non-customizable for complex and evolving application scenarios.
-            </p>
-            <p>
-              In contrast, our SPM can precisely erase targeted concept from DMs while preserving non-targets, as a one-size-fits-all lightweight, customizable, and model-transferable solution.
+                 alt="background image."/>
+            <br><br> -->
+            
+            <p> <b>Modern Generative AI</b> raises significant concerns, including privacy violations of celebrities, 
+              copyright-infringing content generation, artistic style plagiarism, and the creation of unsafe-for-work content. 
+              <b>Machine Unlearning</b> emerges as a promising solution, facing <b>three core challenges:</b> 
+              1) removing unwanted concepts from models effectively, 2) retaining the model's utility to preserve functionality, 
+              and 3) ensuring computational efficiency to minimize resource demands. 
+            </p> 
+              
+            <p> <b>Existing methods struggle to meet all three challenges.</b> Retraining the model from scratch on a scrutinized dataset 
+              achieves exact unlearning but is computationally expensive and inflexible for new unlearning requests. 
+              Gradient ascent updates model weights in a reverse direction relative to the target concept, which can unlearn effectively 
+              but risks over-unlearning and utility degradation. Saliency-based methods identify and update only critical model weights, 
+              using thresholds informed by forget-loss gradients. While balancing unlearning and utility retention, these methods are 
+              computationally intensive due to iterative gradient calculations and require extensive hyperparameter tuning. 
+            </p> 
+                
+            <p> <b>In contrast, SLUG pushes the saliency-based approach to new levels of efficiency.</b> 
+              It requires only a single gradient calculation and a one-step update to a single layer 
+              to achieve effective unlearning, dramatically reducing computational costs while maintaining performance. 
             </p>
           </div>
       </div>
     </div>
-    <!--/ Limitations. -->
 </section>
 
-<section class="section hero is-light">
+
+<section class="section hero">
   <div class="container is-max-desktop">
-    <!-- Method. -->
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
-        <h2 class="title is-3">Our Method</h2>
+        <h2 class="title is-3">Our Method: Single Layer Unlearning Gradient</h2>
           <div class="content has-text-justified">
             <img src="../assets/project/slug/slug-framework.png"
                  class="interpolation-image"
                  alt="Framework image."/>
-            <br><br>
+            <p>Fig. 1: The unlearning framework of our proposed method, Single Layer Unlearning Gradient (SLUG).</p>
+            <br>
             <p>
-              A one-dimentional adapter which we call <b>S</b>emi-<b>P</b>ermeable <b>M</b>embrane (SPM) is employed in a general diffusion model.  
-              We design the <b>Latent Anchoring</b> during the finetuning process to efficiently alleviate the alternation and erosion phenomenon in a self-supervised manner.
-              During the generation phase, we introduce <b>Facilitated Transport</b> mechanism to ensure that only threatening prompts amplify the permeability rate of corresponding SPMs, 
-              while the generation of safe prompts (e.g., Picasso style) remain unharmed.
+              Given an unlearning query, such as removing an identity like "<i>Elon Musk</i>", 
+              we first curate or generate a forget set containing relevant data 
+              and a retain set with data points we want to preserve. 
+              Using these datasets, we calculate and store the model gradients. 
+              Based on these gradients, we identify the important layers to update for unlearning. 
+              We then take a step along the forget gradients of a single layer and evaluate the model's unlearning performance. 
+              To determine a suitable step size λ, we employ a binary search. 
+              After unlearning, the specified concepts are effectively erased while retaining the model's overall utility.
             </p>
           </div>
       </div>
     </div>
-    <!--/ Method. -->
 </section>
+
 
 <section class="section hero">
   <div class="container is-max-desktop">
-    <!-- Results. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">How is Single Layer Update Works?</h2>
+          <div class="content has-text-justified">
+            Our extensive analysis on CLIP zero-shot classification demonstrate that a single unlearning 
+            update on one layer, which is identified by our <i>layer importance</i> and <i>gradient alignment</i> metrics, 
+            is sufficient to make the model forget a targeted concept while preserving 
+            zero-shot classification accuracy close to that of the original CLIP model.
+            <br><br>
+            <img src="../assets/project/slug/analyze.png"
+                 class="interpolation-image"
+                 alt="Teaser image."/>
+            <p>Fig. 2: Pareto-fronts and step-size analysis of one-step update the vision/language parts of CLIP.</p>
+            <br>
+            <p>
+              <b>Main takeaway:</b> with a properly selected unlearning step size, one-step update on one of the pareto-optimal layers, 
+              in terms of high concept importance and low forget-retain gradient alignment, can achieve good unlearning and utility retention.
+            </p>
+          </div>
+      </div>
+    </div>
+</section>
+
+
+<section class="section hero">
+  <div class="container is-max-desktop">
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3">Results</h2>
-          <h3 class="title is-4">General Concept Removal</h3>
-          <div class="columns is-centered">
-            <div class="column">
-              <div class="content has-text-justified">
-                <img src="../assets/project/spm/spm-case_single.png"
-                    class="interpolation-image"
-                    alt="Single concept removal image."/>
-                <br><br>
-                <p>
-                  Samples of "graffiti of the <i>{concept}</i>" after erasing <i>Snoopy</i>. 
-                  Our SPM exhibits sufficient elimination on the targeted concept <i>Snoopy</i>, while the impact on non-targets is negligible.
-                </p>
+          <div class="content has-text-justified">
+            Despite being extremely efficient, SLUG achieves effective unlearning while maintaining a good balance with model utility retention.
+            Besides, SLUG is scalable across different foundation models for different tasks (e.g., CLIP, Stable Diffusion, VLMs) 
+            and flexible enough to jointly unlearn multiple identities. Below, we present some of the remarkable results achieved by SLUG.
+          </div>
+          <h3 class="title is-4">Examples on CLIP zero-shot classification</h3>
+          <div class="content has-text-justified">
+            <div class="columns is-centered">
+              <div class="column">
+                <div class="content has-text-justified">
+                  <img src="../assets/project/slug/clip-0.png"
+                      class="interpolation-image"
+                      alt="CLIP cosine similarity matrix."/>
+                  <p>Fig.3: CLIP original image-text conine similarity matrix.</p>
+                </div>
+              </div>
+
+              <div class="column">
+                <div class="content has-text-justified">
+                  <img src="../assets/project/slug/clip-1.png"
+                      class="interpolation-image"
+                      alt="CLIP cosine similarity matrix."/>
+                  <p>
+                    Fig.4: Unlearning "<i>Elon Musk</i>".
+                  </p>
+                </div>
+              </div>
+
+              <div class="column">
+                <div class="content has-text-justified">
+                  <img src="../assets/project/slug/clip-2.png"
+                      class="interpolation-image"
+                      alt="CLIP cosine similarity matrix."/>
+                  <p>
+                    Fig.5: Unlearning "<i>Elon Musk</i>" and "<i>Mark Zukerburg</i>".
+                  </p>
+                </div>
               </div>
             </div>
+            <p>
+              <b>Main takeaway:</b> SLUG can effectively unlearn multiple targeted identities from CLIP. 
+              By updating a selected layer with a single gradient for each distinct identity, it introduces modularity into the unlearning process.
+            </p>
+        </div>
 
-            <div class="column">
-              <div class="content has-text-justified" style="padding-top: 9px;">
-                <img src="../assets/project/spm/spm-case_transfer.png"
-                    class="interpolation-image"
-                    alt="Single concept removal (transfer) image."/>
-                <br><br>
+          <h3 class="title is-4">Examples on Stable Diffusion Image Generation</h3>
+          <div class="content has-text-justified">
+            <img src="../assets/project/slug/sd-example-copyright.png"
+                class="interpolation-image"
+                alt="Stable Diffusion example: copyright."/>
+            <br>
+            <p>Fig. 6: Unlearning copyright-protected intellectual property ("<i>Mickey Mouse</i>" and "<i>Iron Man</i>") from <a href="https://huggingface.co/stabilityai/stable-diffusion-2-1"> Stable Diffusion-v2.1</a> model.</p>
+            <p>
+              After unlearning with SLUG, Stable Diffusion fails to generate images associated with the targeted copyright-protected figures, 
+              while the overall image generation utility of the original model is largely preserved.
+            </p>
+          </div>
+
+
+          <h3 class="title is-4">Examples on Vision-Language Models</h3>
+          <div class="content has-text-justified">
+            <img src="../assets/project/slug/vlm-example-1.png"
+                class="interpolation-image"
+                alt="Vision-Language Model."/>
                 <p>
-                  Training-free transfer results. 
-                  Once obtained (e.g. from SD v1.4 in this case), SPMs can transfer to other specialized models without re-tuning,
-                  and express both its target concept erasing and non-target preservation capabilities well.
+                  Fig. 7: Unlearning the celebrity example "<i>Elon Musk</i>" from <a href="https://huggingface.co/llava-hf/llava-1.5-7b-hf"> LLaVA-v1.5-7B </a> model.
+                </p>                
+            <br>
+            <img src="../assets/project/slug/vlm-example-2.png"
+                class="interpolation-image"
+                alt="Vision-Language Model."/>
+                <p>
+                  Fig. 8: Unlearning the celebrity example  "<i>Taylor Swift</i>" from <a href="https://huggingface.co/llava-hf/llava-1.5-7b-hf"> LLaVA-v1.5-7B </a> model.
                 </p>
-              </div>
-            </div>
-          </div>
-
-          <h3 class="title is-4">Artistic Style Removal</h3>
-          <div class="content has-text-justified">
-            <img src="../assets/project/spm/spm-case_art.png"
-                class="interpolation-image"
-                alt="Artistic style removal image."/>
-            <br><br>
             <p>
-              Samples from DMs with artistic styles removed. 
-              SPMs can erase targeted styles (upper <i>Van Gogh</i> and lower <i>Picasso</i>) while preserving others, unlike prior works that show an evident trade-off between erasing and preservation.
+              While targeted identities are mapped to wrong name or gender after the unlearning, 
+              the other celebrities identification remain unaffected. 
+              Besides, model's robustness against style distribution shift is also preserved.
+              SLUG can effectively unlearn targeted identities while preserving the model’s utility on vision-language tasks, 
+              maintains high accuracy and functionality across a range of tasks, ensuring minimal impact on the model's overall utility.
             </p>
           </div>
 
-          <h3 class="title is-4">Explicit Content Removal</h3>
-          <div class="content has-text-justified">
-            <img src="../assets/project/spm/spm-nudity.png"
-                class="interpolation-image"
-                alt="Explicit content removal image."/>
-            <br><br>
-            <p>
-              <a href="https://github.com/notAI-tech/NudeNet">NudeNet</a> evaluation results on the I2P benchmark. 
-              The numbers on the left count the exposed body parts generated by the original SD v1.4. 
-              The binplots show the decrement with different methods applied for nudity mitigation, 
-              encompassing data-filtering (SD v2.0) and different erasing strategies. 
-              Compared to the prior works, SPM effectively eliminates explicit contents across different nude categories.
-            </p>
-            <img src="../assets/project/spm/spm-nudity-cases.jpeg"
-                class="interpolation-image"
-                alt="Explicit content removal cases."/>
-            <br><br>
-            <p>
-              Samples conditioned on the I2P prompts with the concept <i>nudity</i> erased. 
-              In each row, from left to right, we present the prompt from the I2P dataset, 
-              the generation outputs of SD v1.4, SD v1.4 + SPM, ChillOutMix, and ChillOutMix + SPM.
-            </p>
-          </div>
 
           <h3 class="title is-4">More Results</h3>
           <div class="content has-text-justified">
-            <p>
-              Further results, such as <b>numerical comparison</b>, <b>multi-concept erasure</b>, <b>memorized image erasure</b>, <b>applications on other DMs (e.g. SD v2.x, SDXL)</b> as well as 
-              <b>more qualitative samples</b>, can be found in the main text and the supplementary material of 
-              <a href="https://arxiv.org/abs/2312.16145">our paper</a>.
+            <p> Comprehensive results on <b>quantitative evaluations</b>, <b>multi-concept unlearning</b>, <b>unlearning of different concepts</b>, 
+              and <b>additional qualitative samples</b> for Stable Diffusion and VLMs can be found in the main text and the supplementary material of 
+              <a href="https://arxiv.org/abs/2407.11867">our paper</a>.
             </p>
           </div>
 
       </div>
     </div>
-    <!--/ Method. -->
 </section>
-
 
 
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
-    <h2 class="title">BibTeX</h2>
+    <h3 class="title">BibTeX</h2>
     <pre style="display: inline-block;"><code>
       @article{cai2024unlearning,
         title={Unlearning Targeted Information via Single Layer Unlearning Gradient},
@@ -601,31 +518,12 @@
 
 <footer class="footer">
   <div class="container">
-    <!-- <div class="content has-text-centered">
-      <a class="icon-link"
-         href="../assets/videos/nerfies_paper.pdf">
-        <i class="fas fa-file-pdf"></i>
-      </a>
-      <a class="icon-link" href="https://github.com/keunhong" class="external-link" disabled>
-        <i class="fab fa-github"></i>
-      </a>
-    </div> -->
     <div class="columns is-centered">
       <div class="column is-8">
         <div class="content">
-          <!-- <p>
-            This website is licensed under a <a rel="license"
-                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
-            Commons Attribution-ShareAlike 4.0 International License</a>.
-          </p> -->
           <p>
-            This page is modified based on <a
-            href="https://github.com/nerfies/nerfies.github.io">nerfies project page</a>.
-            <!-- This means you are free to borrow the <a
-              href="https://github.com/nerfies/nerfies.github.io">source code</a> of this website,
-            we just ask that you link back to this page in the footer.
-            Please remember to remove the analytics code included in the header of the website which
-            you do not want on your website. -->
+            Acknowlegement: web page template from <a
+            href="https://nerfies.github.io/">Park et al</a>.
           </p>
         </div>
       </div>
