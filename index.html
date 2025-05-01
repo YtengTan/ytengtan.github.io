@@ -69,8 +69,45 @@
     
     <heading>Publication</heading>
 
-      <!-- </td>
-      </tr> -->
+    
+    </tbody></table>
+    <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+
+      <tr onmouseout="nerf_stop()" onmouseover="nerf_start()"  bgcolor="">
+        <td style="padding:20px;width:25%;vertical-align:middle">
+          <div class="one">
+            <img src='assets/home/images/slug.png' width="160">
+          </div>
+          <script type="text/javascript">
+            function nerf_start() {
+              document.getElementById('nerf_image').style.opacity = "1";
+            }
+
+            function nerf_stop() {
+              document.getElementById('nerf_image').style.opacity = "0";
+            }
+            nerf_stop()
+          </script>
+        </td>
+        <td style="padding:20px;width:75%;vertical-align:middle">
+          <a href="https://arxiv.org/abs/2407.11867">
+            <papertitle>Targeted Unlearning with Single Layer Unlearning Gradient</papertitle>
+          </a>
+          <br>
+            Zikui Cai, <strong>Yaoteng Tan</strong>, M. Salman Asif
+          <br>
+          <em>ICML</em>, 2025 <font color="red"><strong>(New)</strong></font>
+          <br>
+            <a href="https://arxiv.org/abs/2407.11867">arXiv</a> / 
+            <a href="https://github.com/CSIPlab/SLUG">code</a> /
+            <a href="https://ytengtan.github.io/slug">project page</a>
+          <p></p>
+          <p>
+            We propose a highly efficient machine unlearning method for fundation models (e.g., CLIP, Stable Diffusion, VLMs) that requires only one-time gradient calculation and one-step update on one model layer that are selected based on introduced metrics, layer importance and gradient alignment. Our method provide a modular modification for post-training large models.
+          </p>
+        </td>
+      </tr>    
+
       </tbody></table>
       <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
 
@@ -122,43 +159,6 @@
     
     
     <heading>Preprint</heading>
-    </tbody></table>
-    <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
-
-      <tr onmouseout="nerf_stop()" onmouseover="nerf_start()"  bgcolor="">
-        <td style="padding:20px;width:25%;vertical-align:middle">
-          <div class="one">
-            <img src='assets/home/images/slug.png' width="160">
-          </div>
-          <script type="text/javascript">
-            function nerf_start() {
-              document.getElementById('nerf_image').style.opacity = "1";
-            }
-
-            function nerf_stop() {
-              document.getElementById('nerf_image').style.opacity = "0";
-            }
-            nerf_stop()
-          </script>
-        </td>
-        <td style="padding:20px;width:75%;vertical-align:middle">
-          <a href="https://arxiv.org/abs/2407.11867">
-            <papertitle>Targeted Unlearning with Single Layer Unlearning Gradient</papertitle>
-          </a>
-          <br>
-            Zikui Cai, <strong>Yaoteng Tan</strong>, M. Salman Asif
-          <br>
-          <em>Preprint</em>, 2024 <font color="red"><strong>(New)</strong></font>
-          <br>
-            <a href="https://arxiv.org/abs/2407.11867">arXiv</a> / 
-            <a href="https://github.com/CSIPlab/SLUG">code</a> /
-            <a href="https://ytengtan.github.io/slug">project page</a>
-          <p></p>
-          <p>
-            We propose a highly efficient machine unlearning method for fundation models (e.g., CLIP, Stable Diffusion, VLMs) that requires only one-time gradient calculation and one-step update on one model layer that are selected based on introduced metrics, layer importance and gradient alignment. Our method provide a modular modification for post-training large models.
-          </p>
-        </td>
-      </tr>
 
     </tbody></table>
     <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
